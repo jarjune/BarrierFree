@@ -9,7 +9,7 @@ function BarrierFree(paramsObj) {
 	this._body = document.getElementsByTagName('body')[0];
 
 	this.defaultId = 'BarrierFreeId';
-	this.barrierFreeIdDOM = document.getElementById(this.defaultId);
+	this.barrierFreeDOM = document.getElementById(this.defaultId);
 
 	// 缩放参数
 	this._scale = 1;
@@ -20,10 +20,9 @@ function BarrierFree(paramsObj) {
 	if(paramsObj instanceof Object) {
 
 		this.defaultId = paramsObj['id'] || this.defaultId;
-		this.barrierFreeIdDOM = paramsObj['id'] || document.getElementById(this.defaultId);
+		this.barrierFreeDOM = paramsObj['barrierFreeDOM'] || document.getElementById(this.defaultId);
 
 		// 缩放参数
-		this._scale = paramsObj['scale'] || this._scale;
 		this._gap = paramsObj['gap'] || this._gap;
 		this._min = paramsObj['min'] || this._min;
 		this._max = paramsObj['max'] || this._max;
@@ -33,7 +32,7 @@ function BarrierFree(paramsObj) {
 BarrierFree.Line = function(paramsObj) {
 
 	this.className = 'line';
-	
+
 	if(paramsObj instanceof Object) {
 		this.className = paramsObj['className'] || this.className;
 	}
@@ -107,9 +106,9 @@ BarrierFree.ToolBar.prototype.remove = function() {
  */
  BarrierFree.prototype.increaseScale = function() {
 
- 	this.barrierFreeIdDOM.style.transformOrigin = 'top left';
+ 	this.barrierFreeDOM.style.transformOrigin = 'top left';
  	this._scale = this._scale + this._gap;
- 	this.barrierFreeIdDOM.style.transform = 'scale('+ (this._scale > this._max? (this._scale = this._max): (this._scale)) +')';
+ 	this.barrierFreeDOM.style.transform = 'scale('+ (this._scale > this._max? (this._scale = this._max): (this._scale)) +')';
  	return this;
  }
 
@@ -118,9 +117,9 @@ BarrierFree.ToolBar.prototype.remove = function() {
  */
  BarrierFree.prototype.decreaseScale = function() {
 
- 	this.barrierFreeIdDOM.style.transformOrigin = 'top left';
+ 	this.barrierFreeDOM.style.transformOrigin = 'top left';
  	this._scale = this._scale - this._gap;
- 	this.barrierFreeIdDOM.style.transform = 'scale('+ (this._scale < this._min? (this._scale = this._min): (this._scale)) +')';
+ 	this.barrierFreeDOM.style.transform = 'scale('+ (this._scale < this._min? (this._scale = this._min): (this._scale)) +')';
  	return this;
  }
 
@@ -130,7 +129,7 @@ BarrierFree.ToolBar.prototype.remove = function() {
  BarrierFree.prototype.changeBackground = function(color) {
 
  	var className = 'changeBackground-' + this.color;
- 	this.barrierFreeIdDOM.classList.remove(className)
+ 	this.barrierFreeDOM.classList.remove(className)
  	this.color = color;
 
  	className = 'changeBackground-' + color;
@@ -148,7 +147,7 @@ BarrierFree.ToolBar.prototype.remove = function() {
 	 		this.styleElement.appendChild(this.colorElement);
  		}
 
- 		this.barrierFreeIdDOM.classList.add(className)
+ 		this.barrierFreeDOM.classList.add(className)
  	} else {
  		document.getElementsByTagName('head')[0].removeChild(this.styleElement);
  		this.styleElement = null;
@@ -161,10 +160,19 @@ BarrierFree.ToolBar.prototype.remove = function() {
 /**
  * 返回内部组件实例
  */
- BarrierFree.prototype.build = function() {
+ BarrierFree.prototype.build = function(paramsObj) {
+
+ 	var lineParamsObj;
+ 	var toolBarParamsObj;
+
+ 	if(paramsObj instanceof Object) {
+ 		lineParamsObj = paramsObj['line'];
+ 		toolBarParamsObj = paramsObj['toolbar'];
+ 	}
+
  	return {
- 		line: new BarrierFree.Line(),
- 		toolbar: new BarrierFree.ToolBar()
+ 		line: new BarrierFree.Line(lineParamsObj),
+ 		toolbar: new BarrierFree.ToolBar(toolBarParamsObj)
  	}
  }
 
