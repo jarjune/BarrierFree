@@ -4,7 +4,7 @@
  * @description
  * @date 2019/04/25
  */
-function BarrierFree() {
+function BarrierFree(paramsObj) {
 
 	this._body = document.getElementsByTagName('body')[0];
 
@@ -16,14 +16,33 @@ function BarrierFree() {
 	this._gap = 0.2;
 	this._min = 1;
 	this._max = 2;
+
+	if(paramsObj instanceof Object) {
+
+		this.defaultId = paramsObj['id'] || this.defaultId;
+		this.barrierFreeIdDOM = paramsObj['id'] || document.getElementById(this.defaultId);
+
+		// 缩放参数
+		this._scale = paramsObj['scale'] || this._scale;
+		this._gap = paramsObj['gap'] || this._gap;
+		this._min = paramsObj['min'] || this._min;
+		this._max = paramsObj['max'] || this._max;
+	}
 }
 
-BarrierFree.Line = function() {};
+BarrierFree.Line = function(paramsObj) {
+
+	this.className = 'line';
+	
+	if(paramsObj instanceof Object) {
+		this.className = paramsObj['className'] || this.className;
+	}
+};
 BarrierFree.Line.prototype.create = function() {
 
 	console.log('>>> 创建线 <<<');
 	this.node = document.createElement('div');
-	this.node.setAttribute('class', 'line');
+	this.node.setAttribute('class', this.className);
 
 	var horizontalLine = document.createElement('div');
 	var verticalLine = document.createElement('div');
@@ -48,19 +67,29 @@ BarrierFree.Line.prototype.remove = function() {
 	console.log('>>> 删除线 <<<');
 }
 
-BarrierFree.ToolBar = function() {};
-BarrierFree.ToolBar.prototype.create = function() {
+BarrierFree.ToolBar = function(paramsObj) {
 
-	this.node = document.createElement('div');
-	this.node.setAttribute('class', 'toolbar');
-	this.node.innerHTML = '无障碍阅读\
+	this.el_toolbar = '无障碍阅读\
 	<button onclick="bf.toggle(component.line);">线</button>\
 	<button onclick="bf.increaseScale()">放大</button>\
 	<button onclick="bf.decreaseScale()">缩小</button>\
 	<button onclick="bf.changeBackground(\'red\')">颜色1</button>\
 	<button onclick="bf.changeBackground(\'yellow\')">颜色2</button>\
 	<button onclick="bf.changeBackground(\'blue\')">颜色3</button>\
-	<button onclick="bf.changeBackground(\'\')">重置颜色</button>'
+	<button onclick="bf.changeBackground(\'\')">重置颜色</button>';
+
+	this.className = 'toolbar';
+
+	if(paramsObj instanceof Object) {
+		this.el_toolbar = paramsObj['el_toolbar'] || this.el_toolbar;
+		this.className = paramsObj['className'] || this.className;
+	}
+};
+BarrierFree.ToolBar.prototype.create = function() {
+
+	this.node = document.createElement('div');
+	this.node.setAttribute('class', this.className);
+	this.node.innerHTML = this.el_toolbar;
 
 	document.getElementsByTagName('body')[0].appendChild(this.node);
 	console.log('>>> 创建工具栏 <<<');
