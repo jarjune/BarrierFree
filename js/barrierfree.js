@@ -1,6 +1,6 @@
 /**
  * @author jarjune
- * @version 1.0
+ * @version 1.1
  * @description
  * @date 2019/04/25
  */
@@ -68,6 +68,9 @@ BarrierFree.Line.prototype.remove = function() {
 
 BarrierFree.ToolBar = function(paramsObj) {
 
+	var css1 = 'body{ color: #19f; font-size: 50px; }';
+	var css2 = '.test button{ width: 100px; color: red }';
+
 	this.el_toolbar = '无障碍阅读\
 	<button onclick="bf.toggle(component.line);">线</button>\
 	<button onclick="bf.increaseScale()">放大</button>\
@@ -75,7 +78,10 @@ BarrierFree.ToolBar = function(paramsObj) {
 	<button onclick="bf.changeBackground(\'red\')">颜色1</button>\
 	<button onclick="bf.changeBackground(\'yellow\')">颜色2</button>\
 	<button onclick="bf.changeBackground(\'blue\')">颜色3</button>\
-	<button onclick="bf.changeBackground(\'\')">重置颜色</button>';
+	<button onclick="bf.changeBackground(\'\')">重置颜色</button>\
+	<button onclick="bf.changeStyle(\''+ css1 +'\')">改变样式1</button>\
+	<button onclick="bf.changeStyle(\''+ css2 +'\')">改变样式2</button>\
+	<button onclick="bf.changeStyle(\'\')">重置样式</button>';
 
 	this.className = 'toolbar';
 
@@ -124,10 +130,12 @@ BarrierFree.ToolBar.prototype.remove = function() {
  }
 
  /**
- * 改变颜色
+ * 改变背景颜色
+ * @deprecated since 1.0
  */
  BarrierFree.prototype.changeBackground = function(color) {
 
+ 	console.warn('>>> 已弃用修改背景方法，建议使用[changeStyle] <<<');
  	var className = 'changeBackground-' + this.color;
  	this.barrierFreeDOM.classList.remove(className)
  	this.color = color;
@@ -135,7 +143,7 @@ BarrierFree.ToolBar.prototype.remove = function() {
  	className = 'changeBackground-' + color;
  	if(color) {
  		if(this.styleElement) {
- 			this.styleElement.removeChild(this.colorElement);
+ 			this.colorElement && this.styleElement.removeChild(this.colorElement);
 	 		this.colorElement = document.createTextNode('.' + className + ', .' + className + ' *{ background-color: '+ color +' !important; }');
 	 		this.styleElement.appendChild(this.colorElement);
  		} else {
@@ -149,9 +157,38 @@ BarrierFree.ToolBar.prototype.remove = function() {
 
  		this.barrierFreeDOM.classList.add(className)
  	} else {
- 		document.getElementsByTagName('head')[0].removeChild(this.styleElement);
+ 		// fix.还未设置样式的时候点重置出错
+ 		this.styleElement && document.getElementsByTagName('head')[0].removeChild(this.styleElement);
  		this.styleElement = null;
  		this.colorElement = null;
+ 	}
+
+ 	return this;
+ }
+
+ /**
+ * 改变css样式
+ */
+ BarrierFree.prototype.changeStyle = function(_css) {
+
+ 	if(_css) {
+ 		if(this.styleElement) {
+ 			this.cssElement && this.styleElement.removeChild(this.cssElement);
+	 		this.cssElement = document.createTextNode(_css);
+	 		this.styleElement.appendChild(this.cssElement);
+ 		} else {
+	 		this.styleElement = document.createElement('style');
+	 		this.styleElement.type = 'text/css';
+	 		document.getElementsByTagName('head')[0].appendChild(this.styleElement);
+
+	 		this.cssElement = document.createTextNode(_css);
+	 		this.styleElement.appendChild(this.cssElement);
+ 		}
+
+ 	} else {
+ 		this.styleElement && document.getElementsByTagName('head')[0].removeChild(this.styleElement);
+ 		this.styleElement = null;
+ 		this.cssElement = null;
  	}
 
  	return this;

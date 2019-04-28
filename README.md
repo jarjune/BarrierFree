@@ -46,6 +46,10 @@ bf.toggle(component.toolbar)
 bf.increaseScale();
 bf.decreaseScale();
 
-// 改变背景颜色，参数为：颜色
+// 改变背景颜色，参数为：颜色(在1.1及以后版本不建议使用)
 bf.changeBackground('red');
+
+// 改变背景颜色，参数为：css样式(1.1版本建议)
+// example:
+bf.changeStyle('.test button{ width: 100px; color: red }');
 ```
